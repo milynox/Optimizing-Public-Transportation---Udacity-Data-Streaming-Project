@@ -8,7 +8,7 @@ from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka.avro import AvroProducer
 
 logger = logging.getLogger(__name__)
-
+BROKER_URL = "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094"
 
 class Producer:
     """Defines and provides common functionality amongst Producers"""
@@ -38,9 +38,7 @@ class Producer:
         #
         #
         self.broker_properties = {
-            # TODO
-            # TODO
-            # TODO
+            "bootstrap.servers": BROKER_URL,
         }
 
         # If the topic does not already exist, try to create it

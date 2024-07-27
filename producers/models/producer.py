@@ -39,6 +39,7 @@ class Producer:
         #
         self.broker_properties = {
             "bootstrap.servers": BROKER_URL,
+            "new": "old"
         }
 
         # If the topic does not already exist, try to create it

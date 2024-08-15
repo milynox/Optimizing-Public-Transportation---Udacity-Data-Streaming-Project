@@ -7,7 +7,7 @@ from confluent_kafka import avro
 from confluent_kafka.admin import AdminClient, NewTopic
 
 logger = logging.getLogger(__name__)
-SCHEMA_REGISTRY_URL = "http://localhost:8081/"
+SCHEMA_REGISTRY_URL = "http://localhost:8081"
 BROKER_URL = "PLAINTEXT://localhost:9092"
 # ,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094
 

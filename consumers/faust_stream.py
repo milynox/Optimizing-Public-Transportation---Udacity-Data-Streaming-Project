@@ -38,7 +38,7 @@ app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memor
 topic = app.topic("postgres-stations", value_type=Station)
 
 out_topic = app.topic("org.chicago.cta.stations.table.v1", partitions=1)
-counts = app.Table('click_counts', default=int)
+
 transformed_station_table = app.Table(
    "tranformed_stations",
    default=int,

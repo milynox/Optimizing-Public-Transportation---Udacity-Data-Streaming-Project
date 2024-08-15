@@ -49,8 +49,8 @@ class TurnstileHardware:
             TurnstileHardware.curve_df["hour"] == timestamp.hour
         ]
         ratio = hour_curve.iloc[0]["ridership_ratio"]
-        # total_steps = int(60 / (60 / time_step.total_seconds()))
-        total_steps = int(3600 / time_step.total_seconds())
+        total_steps = int(60 / (60 / time_step.total_seconds()))
+        # total_steps = int(3600 / time_step.total_seconds())
 
         num_riders = 0
         dow = timestamp.weekday()

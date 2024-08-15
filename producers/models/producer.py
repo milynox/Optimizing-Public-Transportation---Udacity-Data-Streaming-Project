@@ -34,7 +34,6 @@ class Producer:
 
         self.broker_properties = {
             "bootstrap.servers": BROKER_URL,
-            "new": "old"
         }
         self.client = AdminClient(self.broker_properties)
 

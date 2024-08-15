@@ -5,9 +5,9 @@ import time
 
 from confluent_kafka import avro
 from confluent_kafka.admin import AdminClient, NewTopic
-from confluent_kafka.avro import AvroProducer
 
 logger = logging.getLogger(__name__)
+SCHEMA_REGISTRY_URL = "http://localhost:8081/"
 BROKER_URL = "PLAINTEXT://localhost:9092"
 # ,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094
 
@@ -43,10 +43,10 @@ class Producer:
             Producer.existing_topics.add(self.topic_name)
 
         avro_config = {
-            "schema.registry.url": "http://localhost:8081/",
+            "schema.registry.url": SCHEMA_REGISTRY_URL,
             "bootstrap.servers": BROKER_URL,
         }
-        self.producer = AvroProducer(
+        self.producer = avro.AvroProducer(
             config=avro_config,
             default_key_schema=self.key_schema,
             default_value_schema=self.value_schema,

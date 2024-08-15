@@ -1,5 +1,6 @@
 """Defines trends calculations for stations"""
 import logging
+from dataclasses import dataclass
 
 import faust
 
@@ -8,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 # Faust will ingest records from Kafka in this format
+@dataclass
 class Station(faust.Record):
     stop_id: int
     direction_id: str
@@ -22,6 +24,7 @@ class Station(faust.Record):
 
 
 # Faust will produce records to Kafka in this format
+@dataclass
 class TransformedStation(faust.Record):
     station_id: int
     station_name: str
@@ -29,30 +32,47 @@ class TransformedStation(faust.Record):
     line: str
 
 
-# TODO: Define a Faust Stream that ingests data from the Kafka Connect stations topic and
-#   places it into a new topic with only the necessary information.
+
 app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
-# TODO: Define the input Kafka Topic. Hint: What topic did Kafka Connect output to?
-# topic = app.topic("TODO", value_type=Station)
-# TODO: Define the output Kafka Topic
-# out_topic = app.topic("TODO", partitions=1)
-# TODO: Define a Faust Table
-#table = app.Table(
-#    # "TODO",
-#    # default=TODO,
-#    partitions=1,
-#    changelog_topic=out_topic,
-#)
+
+topic = app.topic("postgres-stations", value_type=Station)
+
+out_topic = app.topic("org.chicago.cta.stations.table.v1", partitions=1)
+counts = app.Table('click_counts', default=int)
+transformed_station_table = app.Table(
+   "tranformed_stations",
+   default=int,
+   partitions=1,
+   changelog_topic=out_topic,
+)
 
 
-#
-#
-# TODO: Using Faust, transform input `Station` records into `TransformedStation` records. Note that
-# "line" is the color of the station. So if the `Station` record has the field `red` set to true,
-# then you would set the `line` of the `TransformedStation` record to the string `"red"`
-#
-#
+def line_color(station):
+    if (station.red):
+        return "red"
+    elif (station.blue):
+        return "blue"
+    elif (station.green):
+        return "green"
+    else:
+        return ""
 
+
+@app.agent(topic)
+async def truncate_stream(stations):
+    
+    async for station in stations:
+        line = line_color(station)
+        
+        transformed_stations = TransformedStation(
+            station_id=station.station_id,
+            station_name=station.station_name,
+            order=station.order,
+            line=line,
+        )
+        transformed_station_table[station.station_id] = transformed_stations
+        
+        logger.info(f"{station.station_id}: {transformed_station_table[station.station_id]}")
 
 if __name__ == "__main__":
     app.main()

@@ -10,7 +10,7 @@ from tornado import gen
 
 logger = logging.getLogger(__name__)
 
-SCHEMA_REGISTRY_URL = "http://localhost:8081/"
+SCHEMA_REGISTRY_URL = "http://localhost:8081"
 BROKER_URL = "PLAINTEXT://localhost:9092"
 
 class KafkaConsumer:
